@@ -22,6 +22,6 @@ COPY --chown=myuser:myuser . .
 # Update PATH to the new user's local bin
 ENV PATH=/home/myuser/.local/bin:$PATH
 
-EXPOSE 80
+EXPOSE 9999
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "9999"]
