@@ -18,6 +18,15 @@ resource "aws_ecs_task_definition" "app" {
       containerPort = 9999
       hostPort      = 9999
     }]
+    logConfiguration = {
+    logDriver = "awslogs"
+    options = {
+      "awslogs-group"         = "/ecs/my-app"
+      "awslogs-region"        = "ap-south-2"
+      "awslogs-stream-prefix" = "ecs"
+      "awslogs-create-group"  = "true"
+    }
+  }
   }])
 }
 
