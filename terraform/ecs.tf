@@ -12,7 +12,7 @@ resource "aws_ecs_task_definition" "app" {
 
   container_definitions = jsonencode([{
     name      = "my-app"
-    image     = "nginx:latest" # We start with Nginx, then your pipeline will update this to your Python ECR image
+    image     = "506995421637.dkr.ecr.ap-south-2.amazonaws.com/my-python-app:latest" # We start with Nginx, then your pipeline will update this to your Python ECR image
     essential = true
     portMappings = [{
       containerPort = 80
