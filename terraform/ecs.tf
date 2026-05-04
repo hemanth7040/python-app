@@ -15,8 +15,8 @@ resource "aws_ecs_task_definition" "app" {
     image     = "506995421637.dkr.ecr.ap-south-2.amazonaws.com/my-python-app:latest" # We start with Nginx, then your pipeline will update this to your Python ECR image
     essential = true
     portMappings = [{
-      containerPort = 80
-      hostPort      = 80
+      containerPort = 9999
+      hostPort      = 9999
     }]
   }])
 }
