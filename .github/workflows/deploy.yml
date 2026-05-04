@@ -1,0 +1,45 @@
+name: Build, Scan, and Deploy to ECS
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-2
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build Docker Image
+        run: docker build -t my-python-app:latest ./app
+
+      - name: Security Scan with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'my-python-app:latest'
+          format: 'table'
+          exit-code: '0' # Change to '1' if you want to fail the build on high/critical bugs
+          severity: 'CRITICAL,HIGH'
+
+      - name: Push Image to ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          docker tag my-python-app:latest $ECR_REGISTRY/my-python-app:latest
+          docker push $ECR_REGISTRY/my-python-app:latest
+
+      - name: Deploy to Amazon ECS
+        run: |
+          aws ecs update-service --cluster devops-cluster --service my-app-service --force-new-deployment
